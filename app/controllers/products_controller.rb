@@ -5,7 +5,7 @@ class ProductsController < ApplicationController
   def index
     @products = Product.all
 
-    render json: @products
+    render :index, status: :ok
   end
 
   # GET /products/1
