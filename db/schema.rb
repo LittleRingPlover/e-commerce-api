@@ -10,9 +10,33 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_08_19_113226) do
+ActiveRecord::Schema[7.0].define(version: 2023_08_29_115741) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "addresses", force: :cascade do |t|
+    t.string "street"
+    t.string "apartment"
+    t.string "city"
+    t.string "zipcode"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "carts", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "session_id", null: false
+    t.index ["session_id"], name: "index_carts_on_session_id"
+  end
+
+  create_table "carts_products", id: false, force: :cascade do |t|
+    t.bigint "cart_id", null: false
+    t.bigint "product_id", null: false
+    t.integer "quantity"
+    t.index ["cart_id", "product_id"], name: "index_carts_products_on_cart_id_and_product_id"
+    t.index ["product_id", "cart_id"], name: "index_carts_products_on_product_id_and_cart_id"
+  end
 
   create_table "categories", force: :cascade do |t|
     t.string "title"
@@ -45,10 +69,18 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_19_113226) do
     t.index ["product_id", "order_id"], name: "index_orders_products_on_product_id_and_order_id"
   end
 
+  create_table "payment_methods", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "payments", force: :cascade do |t|
     t.decimal "total"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "payment_method_id", null: false
+    t.index ["payment_method_id"], name: "index_payments_on_payment_method_id"
   end
 
   create_table "products", force: :cascade do |t|
@@ -63,6 +95,34 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_19_113226) do
     t.index ["discount_id"], name: "index_products_on_discount_id"
   end
 
+  create_table "sessions", force: :cascade do |t|
+    t.string "access_token"
+    t.string "refresh_token"
+    t.datetime "expire_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id"], name: "index_sessions_on_user_id"
+  end
+
+  create_table "shipping_methods", force: :cascade do |t|
+    t.string "name"
+    t.decimal "price"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "shippings", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "shipping_method_id", null: false
+    t.bigint "order_id", null: false
+    t.bigint "address_id", null: false
+    t.index ["address_id"], name: "index_shippings_on_address_id"
+    t.index ["order_id"], name: "index_shippings_on_order_id"
+    t.index ["shipping_method_id"], name: "index_shippings_on_shipping_method_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -71,12 +131,21 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_19_113226) do
     t.datetime "remember_created_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "address_id", null: false
+    t.index ["address_id"], name: "index_users_on_address_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "carts", "sessions"
   add_foreign_key "orders", "payments"
   add_foreign_key "orders", "users"
+  add_foreign_key "payments", "payment_methods"
   add_foreign_key "products", "categories"
   add_foreign_key "products", "discounts"
+  add_foreign_key "sessions", "users"
+  add_foreign_key "shippings", "addresses"
+  add_foreign_key "shippings", "orders"
+  add_foreign_key "shippings", "shipping_methods"
+  add_foreign_key "users", "addresses"
 end

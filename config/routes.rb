@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  resources :addresses
+  resources :shipping_methods
+  resources :payment_methods
   resources :orders
   devise_for :users
   
