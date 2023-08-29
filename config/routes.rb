@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resources :discounts, defaults: { format: 'json' }
+  resources :categories, defaults: { format: 'json' }
   resources :addresses
   resources :shipping_methods
   resources :payment_methods

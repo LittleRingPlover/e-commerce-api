@@ -1,5 +1,5 @@
 class ProductsController < ApplicationController
-  before_action :set_product, only: %i[ show update destroy ]
+  before_action :set_product, only: %i[ update destroy ]
 
   # GET /products
   def index
@@ -10,7 +10,13 @@ class ProductsController < ApplicationController
 
   # GET /products/1
   def show
-    render json: @product
+    @product = Product.joins(:category).find_by(id: params[:id])
+
+    if @product.present?
+      render :show, status: :ok
+    else
+      render json: { error: 'Product not found' }, status: :not_found
+    end
   end
 
   # POST /products
