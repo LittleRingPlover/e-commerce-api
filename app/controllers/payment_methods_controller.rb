@@ -10,6 +10,13 @@ class PaymentMethodsController < ApplicationController
   # GET /payment_methods/1
   # GET /payment_methods/1.json
   def show
+    @payment_method = PaymentMethod.find_by(id: params[:id])
+
+    if @payment_method.present?
+      render :show, status: :ok
+    else
+      render json: { error: 'Payment method not found' }, status: :not_found
+    end
   end
 
   # POST /payment_methods
