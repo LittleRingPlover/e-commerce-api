@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   resources :shipping_methods
   resources :payment_methods
   resources :orders
+  resources :shippings
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Defines the root path route ("/")

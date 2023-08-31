@@ -1,0 +1,1 @@
+json.array! @shippings, partial: 'shipping', as: :shipping
