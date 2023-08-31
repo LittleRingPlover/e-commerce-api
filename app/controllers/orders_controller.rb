@@ -5,12 +5,18 @@ class OrdersController < ApplicationController
   def index
     @orders = Order.all
 
-    render json: @orders
+    render :index, status: :ok
   end
 
   # GET /orders/1
   def show
-    render json: @order
+    @order = Order.find_by(id: params[:id])
+    
+    if @order.present?
+      render :show, status: :ok
+    else
+      render json: { error: 'Order not found' }, status: :not_found
+    end
   end
 
   # POST /orders
