@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
 
   devise_for :users
+  resources :users, only: [:index, :show]
   
   resources :products, defaults: { format: 'json' }
   resources :payments, defaults: { format: 'json' }

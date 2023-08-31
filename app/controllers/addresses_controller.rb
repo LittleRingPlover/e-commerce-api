@@ -5,11 +5,20 @@ class AddressesController < ApplicationController
   # GET /addresses.json
   def index
     @addresses = Address.all
+
+    render :index, status: :ok
   end
 
   # GET /addresses/1
   # GET /addresses/1.json
   def show
+    @address = Address.find_by(id: params[:id])
+
+    if @address.present?
+      render :show, status: :ok
+    else
+      render json: { error: 'Address not found' }, status: :not_found
+    end
   end
 
   # POST /addresses
